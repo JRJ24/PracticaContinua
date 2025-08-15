@@ -2,7 +2,7 @@
   web:
     build:
       context: .
-    image: TU_USUARIO_DOCKERHUB/hola-mundo-devops:1.0.0
+    image: rjstudioss/hola-mundo-devops:1.0.0
     ports:
       - "3000:3000"
     environment:

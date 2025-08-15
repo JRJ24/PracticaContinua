@@ -6,4 +6,4 @@ const server = http.createServer((req, res) => {
   res.end('Hola Mundo DevOps 👋');
 });
 
-server.listen(port, () => console.log(Servidor escuchando en puerto ));
+server.listen(port, () => console.log("Servidor escuchando en puerto"));
