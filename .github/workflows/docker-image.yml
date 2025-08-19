@@ -1,24 +1,36 @@
-name: Docker Image CI
+name: Deploy App to Docker Hub and Render
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main   # Cambia si tu rama principal es distinta
 
 jobs:
-
-  build:
-
+  build-and-push-docker:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Trigger Render deploy
-      run: |
-          curl -X POST https://api.render.com/v1/services/${{ secrets.RJServiceID }}/deploys \
-            -H "Authorization: Bearer ${{ secrets.RJApiKey }}" \
-            -H "Content-Type: application/json"
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mi-app:latest
+
+  deploy-to-render:
+    runs-on: ubuntu-latest
+    needs: build-and-push-docker
+    steps:
+      - name: Deploy to Render
+        run: |
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RJSERVICEID }}/deploys" \
+          -H "Accept: application/json" \
+          -H "Authorization: Bearer ${{ secrets.RJAPIKEY }}"
