@@ -23,7 +23,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mi-app:latest
+          tags: ${{ secrets.DOCKER_USER }}/mi-app:latest
 
   deploy-to-render:
     runs-on: ubuntu-latest
